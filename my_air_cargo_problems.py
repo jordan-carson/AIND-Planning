@@ -59,6 +59,10 @@ class AirCargoProblem(Problem):
 
             :return: list of Action objects
             """
+            # see fly actions and mimic
+            # Action(Load(c, p, a),
+            #        PRECOND: At(c, a) ∧ At(p, a) ∧ Cargo(c) ∧ Plane(p) ∧ Airport(a)
+            # EFFECT: ¬ At(c, a) ∧ In(c, p))
             loads = []
             for cargo in self.cargos:
                 for plane in self.planes:
@@ -68,6 +72,12 @@ class AirCargoProblem(Problem):
                             expr("At({}, {})".format(plane, airport))
                         ]
                         precond_negative = []
+                        effect_add = [expr("In({}, {})".format(cargo, plane))]
+                        effect_rem = [expr("At({}, {})".format(cargo, airport))]
+                        load = [expr("Load{}, {}, {})".format(cargo, plane, airport)),
+                                      [precond_positiive, precond_negative],
+                                      effect_add, effect_rem]
+                        loads.append(load)
             return loads
 
         def unload_actions():
@@ -77,6 +87,25 @@ class AirCargoProblem(Problem):
             """
             unloads = []
             # TODO create all Unload ground actions from the domain Unload action
+            # Action(Unload(c, p, a),
+            #        PRECOND: In(c, p) ∧ At(p, a) ∧ Cargo(c) ∧ Plane(p) ∧ Airport(a)
+            # EFFECT: At(c, a) ∧ ¬ In(c, p))
+            for cargo in self.cargos:
+                for plane in self.planes:
+                    for airport in self.airports:
+                        precond_positive = [expr("At({}, {})".format(plane, airport)),
+                                            expr("In({}, {})".format(cargo, plane))]
+                        precond_negative = []
+                        effect_add = [expr("At({}, {})".format(cargo, airport))]
+                        effect_rem = [expr("At({}, {})".format(cargo, plane))]
+                        # note action takes three parameters, action, precond, then effect
+                        # precond is a list
+                        # effect is a list
+                        unload = Action(expr("Unload({}, {}, {})".format(cargo, plane, airport)),
+                                        [precond_positive, precond_negative],
+                                        [effect_add, effect_rem])
+                        unloads.append(unload)
+
             return unloads
 
         def fly_actions():
@@ -112,6 +141,9 @@ class AirCargoProblem(Problem):
         """
         # TODO implement
         possible_actions = []
+        for action is self.actions_list:
+
+
         return possible_actions
 
     def result(self, state: str, action: Action):
