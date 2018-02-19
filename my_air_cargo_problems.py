@@ -97,7 +97,7 @@ class AirCargoProblem(Problem):
                                             expr("In({}, {})".format(cargo, plane))]
                         precond_negative = []
                         effect_add = [expr("At({}, {})".format(cargo, airport))]
-                        effect_rem = [expr("At({}, {})".format(cargo, plane))]
+                        effect_rem = [expr("In({}, {})".format(cargo, plane))]
                         # note action takes three parameters, action, precond, then effect
                         # precond is a list
                         # effect is a list
@@ -141,7 +141,7 @@ class AirCargoProblem(Problem):
         """
         # TODO implement
         possible_actions = []
-        for action is self.actions_list:
+        for action is self.actions_list
 
 
         return possible_actions
@@ -227,8 +227,71 @@ def air_cargo_p1() -> AirCargoProblem:
 
 
 def air_cargo_p2() -> AirCargoProblem:
-    # TODO implement Problem 2 definition
-    pass
+    # Air Cargo problem 2:
+    #   Initial state and goal:
+    #
+    # Init(At(C1, SFO) ∧ At(C2, JFK) ∧ At(C3, ATL)
+    # ∧ At(P1, SFO) ∧ At(P2, JFK) ∧ At(P3, ATL)
+    # ∧ Cargo(C1) ∧ Cargo(C2) ∧ Cargo(C3)
+    # ∧ Plane(P1) ∧ Plane(P2) ∧ Plane(P3)
+    # ∧ Airport(JFK) ∧ Airport(SFO) ∧ Airport(ATL))
+    # Goal(At(C1, JFK) ∧ At(C2, SFO) ∧ At(C3, SFO))
+    cargos = ['C1', 'C2', 'C3']
+    planes = ['P1', 'P2', 'P3']
+    airports = ['SFO', 'JFK', 'ATL']
+    pos = [
+        expr('At(C1, SFO)'),
+        expr('At(C2, JFK)'),
+        expr('At(C3, ATL)'),
+        expr('At(P1, SFO)'),
+        expr('At(P2, JFK)'),
+        expr('At(P3, ATL)'),
+    ]
+    # indicate where the cargo and the planes are not, and show the cargo hasn't been loaded in the planes
+    # C1 AND P1 does not include SFO
+    # C2 AND P2 does not include JFK
+    # C3 AND P3 does not include ATL
+
+    neg = [
+        # Cargo 1
+        # expr('At(C1, SFO)'),
+        expr('At(C1, JFK)'),
+        expr('At(C1, ATL)'),
+        expr('In(C1, P1)'),
+        expr('In(C2, P2)'),
+        expr('In(C3, P3)'),
+        # Cargo 2
+        expr('At(C2, SFO)'),
+        # expr('At(C2, JFK)'),
+        expr('At(C2, ATL)'),
+        expr('In(C2, P1)'),
+        expr('In(C2, P2)'),
+        expr('In(C2, P3)'),
+        # Cargo 3
+        expr('At(C3, SFO)'),
+        expr('At(C3, JFK)'),
+        # expr('At(C3, ATL)'),
+        expr('In(C3, P1)'),
+        expr('In(C3, P2)'),
+        expr('In(C3, P3)'),
+        # see above for plane location to not include
+        # expr('At(P1, SFO)'),
+        expr('At(P1, JFK)'),
+        expr('At(P1, ATL)'),
+        expr('At(P2, SFO)'),
+        # expr('At(P2, JFK)'),
+        expr('At(P2, ATL)'),
+        expr('At(P3, SFO)'),
+        expr('At(P3, JFK)'),
+        # expr('At(P3, ATL)'),
+    ]
+    init = FluentState(pos, neg)
+    # Goal(At(C1, JFK) ∧ At(C2, SFO) ∧ At(C3, SFO))
+    # logically speaking, you can have two planes goals at the same airport
+    goal = [expr('At(C1, JFK)'),
+            expr('At(C2, SFO)'),
+            expr('At(C3, SFO)')]
+    return AirCargoProblem(cargos=cargos, planes=planes, airports=airports, initial=init, goal=goal)
 
 
 def air_cargo_p3() -> AirCargoProblem:
