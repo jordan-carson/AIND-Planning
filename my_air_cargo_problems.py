@@ -221,8 +221,15 @@ class AirCargoProblem(Problem):
         conditions by ignoring the preconditions required for an action to be
         executed.
         """
-        # TODO implement (see Russell-Norvig Ed-3 10.2.3  or Russell-Norvig Ed-2 11.2)
+        # TODO implement (see Russell-Norvig Ed-3 10.2.3
+        # or Russell-Norvig Ed-2 11.2)
+        # similar to goal_test() but increase the counter in our propositional logic clause
         count = 0
+        kb = PropKB()
+        kb.tell(decode_state(self, self.state_map).pos_sentence())
+        for c in self.goal:
+            if c not in kb.clauses:
+                count += 1
         return count
 
 
@@ -390,9 +397,6 @@ def air_cargo_p3() -> AirCargoProblem:
         expr('At(C4, ATL)'),
         expr('At(P4, ATL)'),
         # expr('At(C4, ORD)'),
-
-
-
     ]
     init = FluentState(pos_list=pos, neg_list=neg)
     goal = [
@@ -401,6 +405,4 @@ def air_cargo_p3() -> AirCargoProblem:
         expr('At(C2, SFO'),
         expr('At(C4, SFO')
     ]
-
-
     return AirCargoProblem(cargos=cargos, planes=planes, airports=airports, initial=init, goal=goal)
