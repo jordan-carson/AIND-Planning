@@ -75,9 +75,9 @@ class AirCargoProblem(Problem):
                         precond_negative = []
                         effect_add = [expr("In({}, {})".format(cargo, plane))]
                         effect_rem = [expr("At({}, {})".format(cargo, airport))]
-                        load = [expr("Load{}, {}, {})".format(cargo, plane, airport)),
+                        load = Action([expr("Load{}, {}, {})".format(cargo, plane, airport)),
                                       [precond_positiive, precond_negative],
-                                      effect_add, effect_rem]
+                                      effect_add, effect_rem])
                         loads.append(load)
             return loads
 
