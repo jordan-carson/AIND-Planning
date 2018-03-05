@@ -322,20 +322,7 @@ class PlanningGraph():
                     s_node.children.add(action_node)
                     action_node.parents.add(s_node)
 
-
-
-
-
-        # a_nodes = []
-        # for a in self.all_actions:
-        #     a_node = PgNode_a(a)
-        #     if a_node.prenodes.issubset(self.s_levels[level]):
-        #         a_nodes.append(a_node)
-        #         for s_node in self.s_levels[level]:
-        #             s_node.children.add(a_node)
-        #             a_node.parents.add(s_node)
-
-        self.a_levels.append(action_node)
+        self.a_levels.append(action_nodes)
 
     def add_literal_level(self, level):
         """ add an S (literal) level to the Planning Graph
@@ -535,7 +522,7 @@ class PlanningGraph():
 
         for s1_parent in node_s1.parents:
             for s2_parent in node_s2.parents:
-                if not (s1_parent.is_mutex(s2_parent) or s2_parent.is_mutex(s1_parent)):
+                if not s1_parent.is_mutex(s2_parent):  # or s2_parent.is_mutex(s1_parent)):
                     return False # True
 
         return True # False
@@ -546,20 +533,23 @@ class PlanningGraph():
         :return: int
         """
         level_sum = 0
-        # TODO implement
+        # TODO getting error for heuristic not behaving correctly
         # for each goal in the problem, determine the level cost, then add them together
 
-        for g in self.problem.goal:
+        for goal in self.problem.goal:
             is_goal_found = False
-            for level in range(len(self.s_levels)):
-                for s in self.s_levels[level]:
-                    if g == s.literal:
+            for depth in range(len(self.s_levels)):
+                for state in self.s_levels[depth]:
+                    literal = expr(state.symbol)
+                    if state.is_pos:  # literal object has not attribute is_pos
+                        literal = "-" + literal
+                    if literal == goal:
                         is_goal_found = True
-                        level_sum += level
-
-
+                        level_sum += depth
+                        break
+                if is_goal_found:
+                    break
         return level_sum
-
 
 
 
